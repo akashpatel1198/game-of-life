@@ -30,3 +30,10 @@ export const DEFAULT_CONFIG: GameConfig = {
   cellSize: 12,
   speed: 100,
 };
+
+export const GRID_LIMITS = {
+  minRows: 10,
+  maxRows: 150,
+  minCols: 10,
+  maxCols: 200,
+};

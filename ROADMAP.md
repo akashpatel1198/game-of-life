@@ -16,16 +16,16 @@ A polished Conway's Game of Life simulator built with Next.js, React 19, and Tai
 
 ---
 
-## Phase 2: User Controls
+## Phase 2: User Controls ✅
 **Goal:** Let users interact with and control the simulation
 
-- [ ] **2.1** Click to toggle individual cells
-- [ ] **2.2** Click-and-drag to draw multiple cells
-- [ ] **2.3** Clear grid button
-- [ ] **2.4** Randomize grid button
-- [ ] **2.5** Step forward (single generation) button
-- [ ] **2.6** Speed control slider (adjust simulation speed)
-- [ ] **2.7** Grid size control (adjust rows/columns)
+- [x] **2.1** Click to toggle individual cells
+- [x] **2.2** Click-and-drag to draw multiple cells
+- [x] **2.3** Clear grid button
+- [x] **2.4** Randomize grid button
+- [x] **2.5** Step forward (single generation) button
+- [x] **2.6** Speed control slider (adjust simulation speed)
+- [x] **2.7** Grid size control (adjust rows/columns)
 
 ---
 
@@ -166,4 +166,4 @@ contexts/
 4. Phase 9 is optional stretch goals
 5. Feel free to adjust scope as needed
 
-**Current Status:** Phase 1 - Complete ✅ | Ready for Phase 2
+**Current Status:** Phase 2 - Complete ✅ | Ready for Phase 3
