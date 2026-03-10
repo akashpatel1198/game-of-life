@@ -9,19 +9,18 @@ interface PatternPanelProps {
 }
 
 export default function PatternPanel({ isOpen, onClose }: PatternPanelProps) {
+  if (!isOpen) return null;
+
   return (
     <>
-      {/* Backdrop */}
-      {isOpen && (
-        <div className="absolute inset-0 z-10" onClick={onClose} />
-      )}
+      {/* Backdrop - fixed, covers area below top bar */}
+      <div 
+        className="fixed inset-0 top-14 z-40" 
+        onClick={onClose} 
+      />
 
-      {/* Panel */}
-      <aside
-        className={`absolute top-0 right-0 h-full w-80 z-20 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
+      {/* Panel - fixed, below top bar */}
+      <aside className="fixed top-14 right-0 bottom-0 w-80 z-50 animate-slide-in-right">
         <div className="h-full bg-theme-sidebar/95 backdrop-blur-sm border-l border-theme-border flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-theme-border">

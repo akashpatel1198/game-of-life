@@ -214,15 +214,17 @@ export default function Grid({ containerRef }: GridProps) {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={width}
-      height={height}
-      className={`rounded-lg shadow-lg ${selectedPattern ? 'cursor-copy' : 'cursor-crosshair'}`}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
-    />
+    <div className="min-w-fit min-h-fit m-auto">
+      <canvas
+        ref={canvasRef}
+        width={width}
+        height={height}
+        className={`block rounded-lg shadow-lg ${selectedPattern ? 'cursor-copy' : 'cursor-crosshair'}`}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+      />
+    </div>
   );
 }

@@ -12,30 +12,43 @@ function GameContent() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPatternPanelOpen, setIsPatternPanelOpen] = useState(false);
 
+  const toggleSettings = () => {
+    setIsSettingsOpen(prev => !prev);
+    if (!isSettingsOpen) setIsPatternPanelOpen(false);
+  };
+
+  const togglePatterns = () => {
+    setIsPatternPanelOpen(prev => !prev);
+    if (!isPatternPanelOpen) setIsSettingsOpen(false);
+  };
+
   return (
     <div className="h-screen flex flex-col bg-theme-bg overflow-hidden">
       <TopBar 
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenPatterns={() => setIsPatternPanelOpen(true)}
+        isSettingsOpen={isSettingsOpen}
+        isPatternPanelOpen={isPatternPanelOpen}
+        onToggleSettings={toggleSettings}
+        onTogglePatterns={togglePatterns}
       />
       
       <main 
         ref={containerRef}
-        className="flex-1 relative flex items-center justify-center p-8 overflow-auto"
+        className="flex-1 p-8 overflow-auto flex"
       >
         <Grid containerRef={containerRef} />
-        
-        <SettingsPanel 
-          isOpen={isSettingsOpen}
-          onClose={() => setIsSettingsOpen(false)}
-          containerRef={containerRef}
-        />
-        
-        <PatternPanel 
-          isOpen={isPatternPanelOpen}
-          onClose={() => setIsPatternPanelOpen(false)}
-        />
       </main>
+
+      {/* Panels are fixed positioned, outside of scrollable area */}
+      <SettingsPanel 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        containerRef={containerRef}
+      />
+      
+      <PatternPanel 
+        isOpen={isPatternPanelOpen}
+        onClose={() => setIsPatternPanelOpen(false)}
+      />
     </div>
   );
 }

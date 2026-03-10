@@ -5,17 +5,19 @@ import { useGame } from '@/contexts/GameContext';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface TopBarProps {
-  onOpenSettings: () => void;
-  onOpenPatterns: () => void;
+  isSettingsOpen: boolean;
+  isPatternPanelOpen: boolean;
+  onToggleSettings: () => void;
+  onTogglePatterns: () => void;
 }
 
-export default function TopBar({ onOpenSettings, onOpenPatterns }: TopBarProps) {
+export default function TopBar({ isSettingsOpen, isPatternPanelOpen, onToggleSettings, onTogglePatterns }: TopBarProps) {
   const { state, toggleRunning, nextGeneration, clearGrid, randomizeGrid, selectedPattern } = useGame();
   const { theme, toggleTheme } = useTheme();
   const { isRunning, generation } = state;
 
   return (
-    <header className="h-14 bg-theme-sidebar border-b border-theme-border px-4 flex items-center justify-between shrink-0">
+    <header className="h-14 bg-theme-sidebar border-b border-theme-border px-4 flex items-center justify-between shrink-0 relative z-30">
       {/* Left: Main controls */}
       <div className="flex items-center gap-2">
         <button
@@ -62,8 +64,12 @@ export default function TopBar({ onOpenSettings, onOpenPatterns }: TopBarProps) 
       {/* Right: Settings, Patterns, Theme */}
       <div className="flex items-center gap-2">
         <button
-          onClick={onOpenSettings}
-          className="px-3 py-2 rounded-md font-medium bg-theme-card hover:bg-theme-card-hover text-theme-text transition-colors flex items-center gap-2"
+          onClick={onToggleSettings}
+          className={`px-3 py-2 rounded-md font-medium transition-colors flex items-center gap-2 ${
+            isSettingsOpen
+              ? 'bg-theme-accent/20 text-theme-accent border border-theme-accent/30'
+              : 'bg-theme-card hover:bg-theme-card-hover text-theme-text'
+          }`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -73,10 +79,10 @@ export default function TopBar({ onOpenSettings, onOpenPatterns }: TopBarProps) 
         </button>
 
         <button
-          onClick={onOpenPatterns}
+          onClick={onTogglePatterns}
           className={`px-3 py-2 rounded-md font-medium transition-colors flex items-center gap-2 ${
-            selectedPattern 
-              ? 'bg-theme-accent/20 text-theme-accent border border-theme-accent/30' 
+            isPatternPanelOpen || selectedPattern
+              ? 'bg-theme-accent/20 text-theme-accent border border-theme-accent/30'
               : 'bg-theme-card hover:bg-theme-card-hover text-theme-text'
           }`}
         >

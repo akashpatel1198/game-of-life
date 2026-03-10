@@ -53,19 +53,18 @@ export default function SettingsPanel({ isOpen, onClose, containerRef }: Setting
     return 'Very Slow';
   };
 
+  if (!isOpen) return null;
+
   return (
     <>
-      {/* Backdrop */}
-      {isOpen && (
-        <div className="absolute inset-0 z-10" onClick={onClose} />
-      )}
+      {/* Backdrop - fixed, covers area below top bar */}
+      <div 
+        className="fixed inset-0 top-14 z-40" 
+        onClick={onClose} 
+      />
 
-      {/* Panel */}
-      <aside
-        className={`absolute top-0 left-0 h-full w-72 z-20 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
+      {/* Panel - fixed, below top bar */}
+      <aside className="fixed top-14 left-0 bottom-0 w-72 z-50 animate-slide-in-left">
         <div className="h-full bg-theme-sidebar/95 backdrop-blur-sm border-r border-theme-border flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-theme-border">
