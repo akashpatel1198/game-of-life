@@ -52,20 +52,21 @@ A polished Conway's Game of Life simulator built with Next.js, React 19, and Tai
 
 ---
 
-## Phase 5: Pattern Library
+## Phase 5: Pattern Library ✅
 **Goal:** Pre-made patterns users can place on the grid
 
-- [ ] **5.1** Define pattern data structure (2D arrays)
-- [ ] **5.2** Create initial patterns (start with Glider)
-- [ ] **5.3** Pattern selection UI in sidebar
-- [ ] **5.4** Pattern preview on hover/selection
-- [ ] **5.5** Click-to-place pattern on grid
-- [ ] **5.6** Pattern rotation (optional: 90° increments)
-- [ ] **5.7** Expand pattern library:
-  - Oscillators (Blinker, Toad, Beacon, Pulsar)
-  - Spaceships (Glider, LWSS)
-  - Still lifes (Block, Beehive, Loaf)
+- [x] **5.1** Define pattern data structure (2D arrays)
+- [x] **5.2** Create initial patterns (start with Glider)
+- [x] **5.3** Pattern selection UI in sidebar
+- [x] **5.4** Pattern preview on hover/selection
+- [x] **5.5** Click-to-place pattern on grid
+- [x] **5.6** Pattern rotation (90° increments)
+- [x] **5.7** Expand pattern library:
+  - Oscillators (Blinker, Toad, Beacon, Pulsar, Pentadecathlon)
+  - Spaceships (Glider, LWSS, MWSS, HWSS)
+  - Still lifes (Block, Beehive, Loaf, Boat, Tub)
   - Guns (Gosper Glider Gun)
+  - Other (R-pentomino, Diehard, Acorn)
 
 ---
 
@@ -165,4 +166,4 @@ contexts/
 4. Phase 9 is optional stretch goals
 5. Feel free to adjust scope as needed
 
-**Current Status:** Phase 4 - Complete ✅ | Ready for Phase 5
+**Current Status:** Phase 5 - Complete ✅ | Ready for Phase 6

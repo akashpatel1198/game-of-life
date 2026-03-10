@@ -1,8 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useCallback, useRef, useEffect } from 'react';
-import { Grid, GameState, GameConfig, DEFAULT_CONFIG, Coordinate } from '@/lib/types';
+import React, { createContext, useContext, useReducer, useCallback, useRef, useEffect, useState } from 'react';
+import { Grid, GameState, GameConfig, DEFAULT_CONFIG, CellState } from '@/lib/types';
 import { createEmptyGrid, createRandomGrid, toggleCell, setCell, computeNextGeneration } from '@/lib/gameLogic';
+import { Pattern } from '@/lib/patterns';
 
 type GameAction =
   | { type: 'TOGGLE_CELL'; row: number; col: number }
@@ -14,7 +15,8 @@ type GameAction =
   | { type: 'SET_RUNNING'; isRunning: boolean }
   | { type: 'SET_SPEED'; speed: number }
   | { type: 'SET_GRID_SIZE'; rows: number; cols: number }
-  | { type: 'SET_CELL_SIZE'; cellSize: number };
+  | { type: 'SET_CELL_SIZE'; cellSize: number }
+  | { type: 'PLACE_PATTERN'; pattern: CellState[][]; row: number; col: number };
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
@@ -88,6 +90,33 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         config: { ...state.config, cellSize: action.cellSize },
       };
 
+    case 'PLACE_PATTERN': {
+      const newGrid = state.grid.map(r => [...r]);
+      const { pattern, row: startRow, col: startCol } = action;
+      
+      for (let r = 0; r < pattern.length; r++) {
+        for (let c = 0; c < pattern[r].length; c++) {
+          const targetRow = startRow + r;
+          const targetCol = startCol + c;
+          
+          if (
+            targetRow >= 0 &&
+            targetRow < newGrid.length &&
+            targetCol >= 0 &&
+            targetCol < newGrid[0].length &&
+            pattern[r][c] === 1
+          ) {
+            newGrid[targetRow][targetCol] = 1;
+          }
+        }
+      }
+      
+      return {
+        ...state,
+        grid: newGrid,
+      };
+    }
+
     default:
       return state;
   }
@@ -104,6 +133,8 @@ function createInitialState(config: GameConfig = DEFAULT_CONFIG): GameState {
 
 interface GameContextValue {
   state: GameState;
+  selectedPattern: Pattern | null;
+  patternRotation: number;
   toggleCell: (row: number, col: number) => void;
   setCell: (row: number, col: number, cellState: 0 | 1) => void;
   clearGrid: () => void;
@@ -115,12 +146,17 @@ interface GameContextValue {
   setSpeed: (speed: number) => void;
   setGridSize: (rows: number, cols: number) => void;
   setCellSize: (cellSize: number) => void;
+  selectPattern: (pattern: Pattern | null) => void;
+  rotatePattern: () => void;
+  placePattern: (row: number, col: number) => void;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(gameReducer, DEFAULT_CONFIG, createInitialState);
+  const [selectedPattern, setSelectedPattern] = useState<Pattern | null>(null);
+  const [patternRotation, setPatternRotation] = useState(0);
   const animationRef = useRef<number | null>(null);
   const lastUpdateRef = useRef<number>(0);
 
@@ -139,6 +175,39 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const toggleRunning = useCallback(() => {
     dispatch({ type: 'SET_RUNNING', isRunning: !state.isRunning });
   }, [state.isRunning]);
+
+  const selectPattern = useCallback((pattern: Pattern | null) => {
+    setSelectedPattern(pattern);
+    setPatternRotation(0);
+  }, []);
+
+  const rotatePattern = useCallback(() => {
+    setPatternRotation((prev) => (prev + 1) % 4);
+  }, []);
+
+  const getRotatedCells = useCallback((cells: CellState[][], rotation: number): CellState[][] => {
+    let result = cells;
+    for (let i = 0; i < rotation; i++) {
+      const rows = result.length;
+      const cols = result[0].length;
+      const rotated: CellState[][] = [];
+      for (let col = 0; col < cols; col++) {
+        const newRow: CellState[] = [];
+        for (let row = rows - 1; row >= 0; row--) {
+          newRow.push(result[row][col]);
+        }
+        rotated.push(newRow);
+      }
+      result = rotated;
+    }
+    return result;
+  }, []);
+
+  const placePattern = useCallback((row: number, col: number) => {
+    if (!selectedPattern) return;
+    const rotatedCells = getRotatedCells(selectedPattern.cells, patternRotation);
+    dispatch({ type: 'PLACE_PATTERN', pattern: rotatedCells, row, col });
+  }, [selectedPattern, patternRotation, getRotatedCells]);
 
   // Game loop
   useEffect(() => {
@@ -169,6 +238,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const value: GameContextValue = {
     state,
+    selectedPattern,
+    patternRotation,
     toggleCell: (row, col) => dispatch({ type: 'TOGGLE_CELL', row, col }),
     setCell: (row, col, cellState) => dispatch({ type: 'SET_CELL', row, col, state: cellState }),
     clearGrid: () => dispatch({ type: 'CLEAR_GRID' }),
@@ -180,6 +251,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setSpeed: (speed) => dispatch({ type: 'SET_SPEED', speed }),
     setGridSize: (rows, cols) => dispatch({ type: 'SET_GRID_SIZE', rows, cols }),
     setCellSize: (cellSize) => dispatch({ type: 'SET_CELL_SIZE', cellSize }),
+    selectPattern,
+    rotatePattern,
+    placePattern,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

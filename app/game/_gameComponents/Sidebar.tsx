@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Controls from './Controls';
+import PatternPicker from './PatternPicker';
 import ThemeToggle from './ThemeToggle';
 
 interface SidebarProps {
@@ -15,13 +16,19 @@ export default function Sidebar({ containerRef }: SidebarProps) {
         <h2 className="text-xl font-bold text-theme-text">Game of Life</h2>
         <ThemeToggle />
       </div>
+      
       <Controls containerRef={containerRef} />
+      
+      <div className="p-4 bg-theme-card rounded-lg">
+        <PatternPicker />
+      </div>
       
       <div className="flex-1" />
       
       <div className="text-xs text-theme-text-muted space-y-1">
         <p>Click and drag to draw cells</p>
-        <p>Press Play to start simulation</p>
+        <p>Select a pattern, then click to place</p>
+        <p>Press R to rotate selected pattern</p>
       </div>
     </aside>
   );

@@ -3,14 +3,14 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { GRID_LIMITS } from '@/lib/types';
+import { GRID_LIMITS, CellState } from '@/lib/types';
 
 interface GridProps {
   containerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function Grid({ containerRef }: GridProps) {
-  const { state, setCell, setGridSize } = useGame();
+  const { state, setCell, setGridSize, selectedPattern, patternRotation, placePattern } = useGame();
   const { theme } = useTheme();
   const { grid, config } = state;
   const { cellSize } = config;
@@ -18,10 +18,30 @@ export default function Grid({ containerRef }: GridProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawMode, setDrawMode] = useState<0 | 1>(1);
+  const [hoverCell, setHoverCell] = useState<{ row: number; col: number } | null>(null);
   const hasAutoFit = useRef(false);
 
   const width = grid[0].length * cellSize;
   const height = grid.length * cellSize;
+
+  // Get rotated pattern cells
+  const getRotatedCells = useCallback((cells: CellState[][], rotation: number): CellState[][] => {
+    let result = cells;
+    for (let i = 0; i < rotation; i++) {
+      const rows = result.length;
+      const cols = result[0].length;
+      const rotated: CellState[][] = [];
+      for (let col = 0; col < cols; col++) {
+        const newRow: CellState[] = [];
+        for (let row = rows - 1; row >= 0; row--) {
+          newRow.push(result[row][col]);
+        }
+        rotated.push(newRow);
+      }
+      result = rotated;
+    }
+    return result;
+  }, []);
 
   // Auto-fit grid to container on mount
   useEffect(() => {
@@ -51,7 +71,6 @@ export default function Grid({ containerRef }: GridProps) {
     if (!ctx) return;
 
     const draw = () => {
-      // Read theme colors from CSS variables
       const styles = getComputedStyle(document.documentElement);
       const gridBg = styles.getPropertyValue('--theme-grid-bg').trim();
       const gridLine = styles.getPropertyValue('--theme-grid-line').trim();
@@ -60,6 +79,7 @@ export default function Grid({ containerRef }: GridProps) {
       ctx.fillStyle = gridBg;
       ctx.fillRect(0, 0, width, height);
 
+      // Draw alive cells
       ctx.fillStyle = cellAlive;
       for (let row = 0; row < grid.length; row++) {
         for (let col = 0; col < grid[0].length; col++) {
@@ -74,6 +94,38 @@ export default function Grid({ containerRef }: GridProps) {
         }
       }
 
+      // Draw pattern preview if hovering with selected pattern
+      if (selectedPattern && hoverCell) {
+        const patternCells = getRotatedCells(selectedPattern.cells, patternRotation);
+        ctx.fillStyle = cellAlive;
+        ctx.globalAlpha = 0.5;
+        
+        for (let r = 0; r < patternCells.length; r++) {
+          for (let c = 0; c < patternCells[r].length; c++) {
+            if (patternCells[r][c] === 1) {
+              const targetRow = hoverCell.row + r;
+              const targetCol = hoverCell.col + c;
+              
+              if (
+                targetRow >= 0 &&
+                targetRow < grid.length &&
+                targetCol >= 0 &&
+                targetCol < grid[0].length
+              ) {
+                ctx.fillRect(
+                  targetCol * cellSize + 1,
+                  targetRow * cellSize + 1,
+                  cellSize - 2,
+                  cellSize - 2
+                );
+              }
+            }
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // Draw grid lines
       ctx.strokeStyle = gridLine;
       ctx.lineWidth = 1;
 
@@ -92,10 +144,9 @@ export default function Grid({ containerRef }: GridProps) {
       }
     };
 
-    // Use requestAnimationFrame to ensure CSS has updated before reading
     const frameId = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(frameId);
-  }, [grid, cellSize, width, height, theme]);
+  }, [grid, cellSize, width, height, theme, selectedPattern, hoverCell, patternRotation, getRotatedCells]);
 
   const getCellFromEvent = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>): { row: number; col: number } | null => {
@@ -122,6 +173,13 @@ export default function Grid({ containerRef }: GridProps) {
       const cell = getCellFromEvent(e);
       if (!cell) return;
 
+      // If a pattern is selected, place it
+      if (selectedPattern) {
+        placePattern(cell.row, cell.col);
+        return;
+      }
+
+      // Otherwise, draw mode
       const currentState = grid[cell.row][cell.col];
       const newMode = currentState === 1 ? 0 : 1;
       setDrawMode(newMode as 0 | 1);
@@ -129,19 +187,21 @@ export default function Grid({ containerRef }: GridProps) {
 
       setCell(cell.row, cell.col, newMode as 0 | 1);
     },
-    [getCellFromEvent, grid, setCell]
+    [getCellFromEvent, grid, setCell, selectedPattern, placePattern]
   );
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!isDrawing) return;
-
       const cell = getCellFromEvent(e);
+      setHoverCell(cell);
+
+      if (!isDrawing || selectedPattern) return;
+
       if (!cell) return;
 
       setCell(cell.row, cell.col, drawMode);
     },
-    [isDrawing, getCellFromEvent, setCell, drawMode]
+    [isDrawing, getCellFromEvent, setCell, drawMode, selectedPattern]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -150,6 +210,7 @@ export default function Grid({ containerRef }: GridProps) {
 
   const handleMouseLeave = useCallback(() => {
     setIsDrawing(false);
+    setHoverCell(null);
   }, []);
 
   return (
@@ -157,7 +218,7 @@ export default function Grid({ containerRef }: GridProps) {
       ref={canvasRef}
       width={width}
       height={height}
-      className="cursor-crosshair rounded-lg shadow-lg"
+      className={`rounded-lg shadow-lg ${selectedPattern ? 'cursor-copy' : 'cursor-crosshair'}`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
