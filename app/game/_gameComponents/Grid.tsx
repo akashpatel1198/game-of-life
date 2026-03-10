@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { GRID_LIMITS } from '@/lib/types';
 
 interface GridProps {
@@ -10,6 +11,7 @@ interface GridProps {
 
 export default function Grid({ containerRef }: GridProps) {
   const { state, setCell, setGridSize } = useGame();
+  const { theme } = useTheme();
   const { grid, config } = state;
   const { cellSize } = config;
 
@@ -26,7 +28,7 @@ export default function Grid({ containerRef }: GridProps) {
     if (hasAutoFit.current || !containerRef?.current) return;
 
     const container = containerRef.current;
-    const padding = 32; // Account for padding in the container
+    const padding = 32;
     const availableWidth = container.clientWidth - padding * 2;
     const availableHeight = container.clientHeight - padding * 2;
 
@@ -48,40 +50,52 @@ export default function Grid({ containerRef }: GridProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    ctx.fillStyle = '#1a1a2e';
-    ctx.fillRect(0, 0, width, height);
+    const draw = () => {
+      // Read theme colors from CSS variables
+      const styles = getComputedStyle(document.documentElement);
+      const gridBg = styles.getPropertyValue('--theme-grid-bg').trim();
+      const gridLine = styles.getPropertyValue('--theme-grid-line').trim();
+      const cellAlive = styles.getPropertyValue('--theme-cell-alive').trim();
 
-    ctx.fillStyle = '#4ade80';
-    for (let row = 0; row < grid.length; row++) {
-      for (let col = 0; col < grid[0].length; col++) {
-        if (grid[row][col] === 1) {
-          ctx.fillRect(
-            col * cellSize + 1,
-            row * cellSize + 1,
-            cellSize - 2,
-            cellSize - 2
-          );
+      ctx.fillStyle = gridBg;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = cellAlive;
+      for (let row = 0; row < grid.length; row++) {
+        for (let col = 0; col < grid[0].length; col++) {
+          if (grid[row][col] === 1) {
+            ctx.fillRect(
+              col * cellSize + 1,
+              row * cellSize + 1,
+              cellSize - 2,
+              cellSize - 2
+            );
+          }
         }
       }
-    }
 
-    ctx.strokeStyle = '#2d2d44';
-    ctx.lineWidth = 1;
+      ctx.strokeStyle = gridLine;
+      ctx.lineWidth = 1;
 
-    for (let x = 0; x <= width; x += cellSize) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
-      ctx.stroke();
-    }
+      for (let x = 0; x <= width; x += cellSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
 
-    for (let y = 0; y <= height; y += cellSize) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
-    }
-  }, [grid, cellSize, width, height]);
+      for (let y = 0; y <= height; y += cellSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+    };
+
+    // Use requestAnimationFrame to ensure CSS has updated before reading
+    const frameId = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(frameId);
+  }, [grid, cellSize, width, height, theme]);
 
   const getCellFromEvent = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>): { row: number; col: number } | null => {

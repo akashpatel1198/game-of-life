@@ -41,14 +41,14 @@ A polished Conway's Game of Life simulator built with Next.js, React 19, and Tai
 
 ---
 
-## Phase 4: Theme System
+## Phase 4: Theme System ✅
 **Goal:** Dark mode and theme support
 
-- [ ] **4.1** Set up theme context/provider
-- [ ] **4.2** Implement dark/light mode toggle
-- [ ] **4.3** Define color palette for both themes
-- [ ] **4.4** Persist theme preference to localStorage
-- [ ] **4.5** Style all components for both themes
+- [x] **4.1** Set up theme context/provider
+- [x] **4.2** Implement dark/light mode toggle
+- [x] **4.3** Define color palette for both themes
+- [x] **4.4** Persist theme preference to localStorage
+- [x] **4.5** Style all components for both themes
 
 ---
 
@@ -111,8 +111,6 @@ A polished Conway's Game of Life simulator built with Next.js, React 19, and Tai
 - [ ] **9.2** Pan/drag to move around grid
 - [ ] **9.3** Generation counter display
 - [ ] **9.4** Undo/redo for cell edits
-- [ ] **9.5** Grid wrapping toggle (toroidal vs bounded)
-- [ ] **9.6** Touch support for tablet
 
 ---
 
@@ -167,4 +165,4 @@ contexts/
 4. Phase 9 is optional stretch goals
 5. Feel free to adjust scope as needed
 
-**Current Status:** Phase 3 - Complete ✅ | Ready for Phase 4
+**Current Status:** Phase 4 - Complete ✅ | Ready for Phase 5

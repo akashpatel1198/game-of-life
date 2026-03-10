@@ -1,26 +1,66 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Dark theme (default) */
+:root,
+.dark {
+  --theme-bg: #020617;
+  --theme-bg-secondary: #0f172a;
+  --theme-sidebar: #0f172a;
+  --theme-card: #1e293b;
+  --theme-card-hover: #334155;
+  --theme-border: #334155;
+  --theme-text: #f1f5f9;
+  --theme-text-secondary: #94a3b8;
+  --theme-text-muted: #64748b;
+  --theme-accent: #4ade80;
+  --theme-accent-hover: #22c55e;
+  --theme-danger: #ef4444;
+  --theme-danger-hover: #dc2626;
+  --theme-grid-bg: #1a1a2e;
+  --theme-grid-line: #2d2d44;
+  --theme-cell-alive: #4ade80;
+}
+
+/* Light theme */
+.light {
+  --theme-bg: #f8fafc;
+  --theme-bg-secondary: #f1f5f9;
+  --theme-sidebar: #ffffff;
+  --theme-card: #e2e8f0;
+  --theme-card-hover: #cbd5e1;
+  --theme-border: #cbd5e1;
+  --theme-text: #0f172a;
+  --theme-text-secondary: #475569;
+  --theme-text-muted: #64748b;
+  --theme-accent: #16a34a;
+  --theme-accent-hover: #15803d;
+  --theme-danger: #dc2626;
+  --theme-danger-hover: #b91c1c;
+  --theme-grid-bg: #e2e8f0;
+  --theme-grid-line: #cbd5e1;
+  --theme-cell-alive: #16a34a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-theme-bg: var(--theme-bg);
+  --color-theme-bg-secondary: var(--theme-bg-secondary);
+  --color-theme-sidebar: var(--theme-sidebar);
+  --color-theme-card: var(--theme-card);
+  --color-theme-card-hover: var(--theme-card-hover);
+  --color-theme-border: var(--theme-border);
+  --color-theme-text: var(--theme-text);
+  --color-theme-text-secondary: var(--theme-text-secondary);
+  --color-theme-text-muted: var(--theme-text-muted);
+  --color-theme-accent: var(--theme-accent);
+  --color-theme-accent-hover: var(--theme-accent-hover);
+  --color-theme-danger: var(--theme-danger);
+  --color-theme-danger-hover: var(--theme-danger-hover);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #c5c5c5;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--theme-bg);
+  color: var(--theme-text);
   font-family: Arial, Helvetica, sans-serif;
 }

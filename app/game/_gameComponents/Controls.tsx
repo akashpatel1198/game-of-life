@@ -59,22 +59,22 @@ export default function Controls({ containerRef }: ControlsProps) {
   return (
     <div className="flex flex-col gap-6">
       {/* Generation Counter */}
-      <div className="p-4 bg-slate-800 rounded-lg">
-        <div className="text-sm text-slate-400">
-          Generation: <span className="font-mono text-white text-lg">{generation}</span>
+      <div className="p-4 bg-theme-card rounded-lg">
+        <div className="text-sm text-theme-text-secondary">
+          Generation: <span className="font-mono text-theme-text text-lg">{generation}</span>
         </div>
       </div>
 
       {/* Playback Controls */}
-      <div className="p-4 bg-slate-800 rounded-lg">
-        <h3 className="text-sm font-medium text-slate-400 mb-3">Playback</h3>
+      <div className="p-4 bg-theme-card rounded-lg">
+        <h3 className="text-sm font-medium text-theme-text-secondary mb-3">Playback</h3>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={toggleRunning}
             className={`px-4 py-2 rounded-md font-medium transition-colors ${
               isRunning
-                ? 'bg-red-500 hover:bg-red-600 text-white'
-                : 'bg-green-500 hover:bg-green-600 text-white'
+                ? 'bg-theme-danger hover:bg-theme-danger-hover text-white'
+                : 'bg-theme-accent hover:bg-theme-accent-hover text-white'
             }`}
           >
             {isRunning ? 'Pause' : 'Play'}
@@ -83,21 +83,21 @@ export default function Controls({ containerRef }: ControlsProps) {
           <button
             onClick={nextGeneration}
             disabled={isRunning}
-            className="px-4 py-2 rounded-md font-medium bg-slate-600 hover:bg-slate-500 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 rounded-md font-medium bg-theme-card-hover hover:opacity-80 text-theme-text disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Step
           </button>
 
           <button
             onClick={clearGrid}
-            className="px-4 py-2 rounded-md font-medium bg-slate-600 hover:bg-slate-500 text-white transition-colors"
+            className="px-4 py-2 rounded-md font-medium bg-theme-card-hover hover:opacity-80 text-theme-text transition-colors"
           >
             Clear
           </button>
 
           <button
             onClick={randomizeGrid}
-            className="px-4 py-2 rounded-md font-medium bg-slate-600 hover:bg-slate-500 text-white transition-colors"
+            className="px-4 py-2 rounded-md font-medium bg-theme-card-hover hover:opacity-80 text-theme-text transition-colors"
           >
             Random
           </button>
@@ -105,8 +105,8 @@ export default function Controls({ containerRef }: ControlsProps) {
       </div>
 
       {/* Speed Control */}
-      <div className="p-4 bg-slate-800 rounded-lg">
-        <h3 className="text-sm font-medium text-slate-400 mb-3">Speed</h3>
+      <div className="p-4 bg-theme-card rounded-lg">
+        <h3 className="text-sm font-medium text-theme-text-secondary mb-3">Speed</h3>
         <div className="space-y-2">
           <input
             type="range"
@@ -114,58 +114,58 @@ export default function Controls({ containerRef }: ControlsProps) {
             max="500"
             value={speed}
             onChange={handleSpeedChange}
-            className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-green-500"
+            className="w-full h-2 bg-theme-card-hover rounded-lg appearance-none cursor-pointer accent-theme-accent"
           />
-          <div className="flex justify-between text-xs text-slate-500">
+          <div className="flex justify-between text-xs text-theme-text-muted">
             <span>Fast</span>
-            <span className="text-slate-300">{getSpeedLabel(speed)} ({speed}ms)</span>
+            <span className="text-theme-text-secondary">{getSpeedLabel(speed)} ({speed}ms)</span>
             <span>Slow</span>
           </div>
         </div>
       </div>
 
       {/* Grid Size Controls */}
-      <div className="p-4 bg-slate-800 rounded-lg">
+      <div className="p-4 bg-theme-card rounded-lg">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-slate-400">Grid Size</h3>
+          <h3 className="text-sm font-medium text-theme-text-secondary">Grid Size</h3>
           <button
             onClick={handleFitToScreen}
-            className="text-xs px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 transition-colors"
+            className="text-xs px-2 py-1 rounded bg-theme-card-hover hover:opacity-80 text-theme-text-secondary transition-colors"
           >
             Fit to Screen
           </button>
         </div>
-        <p className="text-xs text-slate-500 mb-3">Changing size will clear the grid</p>
+        <p className="text-xs text-theme-text-muted mb-3">Changing size will clear the grid</p>
         
         <div className="space-y-3">
           <div className="flex items-center gap-3">
-            <label className="text-sm text-slate-400 w-12">Rows</label>
+            <label className="text-sm text-theme-text-secondary w-12">Rows</label>
             <input
               type="range"
               min={GRID_LIMITS.minRows}
               max={GRID_LIMITS.maxRows}
               value={gridSize.rows}
               onChange={handleRowsChange}
-              className="flex-1 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              className="flex-1 h-2 bg-theme-card-hover rounded-lg appearance-none cursor-pointer accent-blue-500"
             />
-            <span className="text-sm text-white font-mono w-8 text-right">{gridSize.rows}</span>
+            <span className="text-sm text-theme-text font-mono w-8 text-right">{gridSize.rows}</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <label className="text-sm text-slate-400 w-12">Cols</label>
+            <label className="text-sm text-theme-text-secondary w-12">Cols</label>
             <input
               type="range"
               min={GRID_LIMITS.minCols}
               max={GRID_LIMITS.maxCols}
               value={gridSize.cols}
               onChange={handleColsChange}
-              className="flex-1 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              className="flex-1 h-2 bg-theme-card-hover rounded-lg appearance-none cursor-pointer accent-blue-500"
             />
-            <span className="text-sm text-white font-mono w-8 text-right">{gridSize.cols}</span>
+            <span className="text-sm text-theme-text font-mono w-8 text-right">{gridSize.cols}</span>
           </div>
         </div>
 
-        <div className="mt-3 text-xs text-slate-500">
+        <div className="mt-3 text-xs text-theme-text-muted">
           {gridSize.rows} × {gridSize.cols} = {(gridSize.rows * gridSize.cols).toLocaleString()} cells
         </div>
       </div>

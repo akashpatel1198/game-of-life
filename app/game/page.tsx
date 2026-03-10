@@ -9,7 +9,7 @@ function GameContent() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="h-screen flex bg-slate-950">
+    <div className="h-screen flex bg-theme-bg">
       <Sidebar containerRef={containerRef} />
       <main 
         ref={containerRef}
