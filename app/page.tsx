@@ -68,7 +68,7 @@ export default function Home() {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold text-white mb-4">Why does it matter?</h2>
           <p className="text-slate-300 leading-relaxed mb-4">
-            The Game of Life is <strong className="text-white">Turing complete</strong>, meaning it can simulate any computer algorithm. 
+            The Game of Life is <strong className="text-white">Turing complete</strong> {"(let's pretend I knew what that means)"}, meaning it can simulate any computer algorithm. 
             People have built working computers, calculators, and even other Game of Life simulations inside of it.
           </p>
           <p className="text-slate-300 leading-relaxed">
@@ -105,7 +105,7 @@ export default function Home() {
             </a>
           </div>
         </section>
-        
+
       </div>
     </main>
   );

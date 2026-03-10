@@ -13,7 +13,7 @@ function GameContent() {
       <Sidebar containerRef={containerRef} />
       <main 
         ref={containerRef}
-        className="flex-1 flex items-center justify-center p-8 overflow-hidden"
+        className="flex-1 flex items-center justify-center p-8 overflow-auto"
       >
         <Grid containerRef={containerRef} />
       </main>
