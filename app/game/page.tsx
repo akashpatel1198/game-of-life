@@ -1,21 +1,40 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { GameProvider } from '@/contexts/GameContext';
 import Grid from './_gameComponents/Grid';
-import Sidebar from './_gameComponents/Sidebar';
+import TopBar from './_gameComponents/TopBar';
+import SettingsPanel from './_gameComponents/SettingsPanel';
+import PatternPanel from './_gameComponents/PatternPanel';
 
 function GameContent() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isPatternPanelOpen, setIsPatternPanelOpen] = useState(false);
 
   return (
-    <div className="h-screen flex bg-theme-bg">
-      <Sidebar containerRef={containerRef} />
+    <div className="h-screen flex flex-col bg-theme-bg overflow-hidden">
+      <TopBar 
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenPatterns={() => setIsPatternPanelOpen(true)}
+      />
+      
       <main 
         ref={containerRef}
-        className="flex-1 flex items-center justify-center p-8 overflow-auto"
+        className="flex-1 relative flex items-center justify-center p-8 overflow-auto"
       >
         <Grid containerRef={containerRef} />
+        
+        <SettingsPanel 
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          containerRef={containerRef}
+        />
+        
+        <PatternPanel 
+          isOpen={isPatternPanelOpen}
+          onClose={() => setIsPatternPanelOpen(false)}
+        />
       </main>
     </div>
   );
