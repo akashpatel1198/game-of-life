@@ -2,11 +2,16 @@
 
 import React from 'react';
 import { useGame } from '@/contexts/GameContext';
+import { GRID_LIMITS } from '@/lib/types';
 
-export default function Controls() {
+interface ControlsProps {
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+export default function Controls({ containerRef }: ControlsProps) {
   const { state, toggleRunning, nextGeneration, clearGrid, randomizeGrid, setSpeed, setGridSize } = useGame();
   const { isRunning, generation, config } = state;
-  const { speed, gridSize } = config;
+  const { speed, gridSize, cellSize } = config;
 
   const handleSpeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSpeed = parseInt(e.target.value, 10);
@@ -15,16 +20,33 @@ export default function Controls() {
 
   const handleRowsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newRows = parseInt(e.target.value, 10);
-    if (newRows >= 10 && newRows <= 100) {
+    if (newRows >= GRID_LIMITS.minRows && newRows <= GRID_LIMITS.maxRows) {
       setGridSize(newRows, gridSize.cols);
     }
   };
 
   const handleColsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newCols = parseInt(e.target.value, 10);
-    if (newCols >= 10 && newCols <= 100) {
+    if (newCols >= GRID_LIMITS.minCols && newCols <= GRID_LIMITS.maxCols) {
       setGridSize(gridSize.rows, newCols);
     }
+  };
+
+  const handleFitToScreen = () => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
+    const padding = 32;
+    const availableWidth = container.clientWidth - padding * 2;
+    const availableHeight = container.clientHeight - padding * 2;
+
+    const maxCols = Math.floor(availableWidth / cellSize);
+    const maxRows = Math.floor(availableHeight / cellSize);
+
+    const cols = Math.min(Math.max(maxCols, GRID_LIMITS.minCols), GRID_LIMITS.maxCols);
+    const rows = Math.min(Math.max(maxRows, GRID_LIMITS.minRows), GRID_LIMITS.maxRows);
+
+    setGridSize(rows, cols);
   };
 
   const getSpeedLabel = (ms: number): string => {
@@ -104,7 +126,15 @@ export default function Controls() {
 
       {/* Grid Size Controls */}
       <div className="p-4 bg-slate-800 rounded-lg">
-        <h3 className="text-sm font-medium text-slate-400 mb-3">Grid Size</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-medium text-slate-400">Grid Size</h3>
+          <button
+            onClick={handleFitToScreen}
+            className="text-xs px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 transition-colors"
+          >
+            Fit to Screen
+          </button>
+        </div>
         <p className="text-xs text-slate-500 mb-3">Changing size will clear the grid</p>
         
         <div className="space-y-3">
@@ -112,8 +142,8 @@ export default function Controls() {
             <label className="text-sm text-slate-400 w-12">Rows</label>
             <input
               type="range"
-              min="10"
-              max="100"
+              min={GRID_LIMITS.minRows}
+              max={GRID_LIMITS.maxRows}
               value={gridSize.rows}
               onChange={handleRowsChange}
               className="flex-1 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500"
@@ -125,8 +155,8 @@ export default function Controls() {
             <label className="text-sm text-slate-400 w-12">Cols</label>
             <input
               type="range"
-              min="10"
-              max="100"
+              min={GRID_LIMITS.minCols}
+              max={GRID_LIMITS.maxCols}
               value={gridSize.cols}
               onChange={handleColsChange}
               className="flex-1 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500"
@@ -136,7 +166,7 @@ export default function Controls() {
         </div>
 
         <div className="mt-3 text-xs text-slate-500">
-          {gridSize.rows} × {gridSize.cols} = {gridSize.rows * gridSize.cols} cells
+          {gridSize.rows} × {gridSize.cols} = {(gridSize.rows * gridSize.cols).toLocaleString()} cells
         </div>
       </div>
     </div>

@@ -2,18 +2,43 @@
 
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
+import { GRID_LIMITS } from '@/lib/types';
 
-export default function Grid() {
-  const { state, toggleCell, setCell } = useGame();
+interface GridProps {
+  containerRef?: React.RefObject<HTMLDivElement | null>;
+}
+
+export default function Grid({ containerRef }: GridProps) {
+  const { state, setCell, setGridSize } = useGame();
   const { grid, config } = state;
   const { cellSize } = config;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [drawMode, setDrawMode] = useState<0 | 1>(1); // 1 = drawing alive, 0 = erasing
+  const [drawMode, setDrawMode] = useState<0 | 1>(1);
+  const hasAutoFit = useRef(false);
 
   const width = grid[0].length * cellSize;
   const height = grid.length * cellSize;
+
+  // Auto-fit grid to container on mount
+  useEffect(() => {
+    if (hasAutoFit.current || !containerRef?.current) return;
+
+    const container = containerRef.current;
+    const padding = 32; // Account for padding in the container
+    const availableWidth = container.clientWidth - padding * 2;
+    const availableHeight = container.clientHeight - padding * 2;
+
+    const maxCols = Math.floor(availableWidth / cellSize);
+    const maxRows = Math.floor(availableHeight / cellSize);
+
+    const cols = Math.min(Math.max(maxCols, GRID_LIMITS.minCols), GRID_LIMITS.maxCols);
+    const rows = Math.min(Math.max(maxRows, GRID_LIMITS.minRows), GRID_LIMITS.maxRows);
+
+    setGridSize(rows, cols);
+    hasAutoFit.current = true;
+  }, [containerRef, cellSize, setGridSize]);
 
   // Draw the grid
   useEffect(() => {
@@ -23,11 +48,9 @@ export default function Grid() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
     ctx.fillStyle = '#1a1a2e';
     ctx.fillRect(0, 0, width, height);
 
-    // Draw cells
     ctx.fillStyle = '#4ade80';
     for (let row = 0; row < grid.length; row++) {
       for (let col = 0; col < grid[0].length; col++) {
@@ -42,11 +65,9 @@ export default function Grid() {
       }
     }
 
-    // Draw grid lines
     ctx.strokeStyle = '#2d2d44';
     ctx.lineWidth = 1;
 
-    // Vertical lines
     for (let x = 0; x <= width; x += cellSize) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
@@ -54,7 +75,6 @@ export default function Grid() {
       ctx.stroke();
     }
 
-    // Horizontal lines
     for (let y = 0; y <= height; y += cellSize) {
       ctx.beginPath();
       ctx.moveTo(0, y);
@@ -88,7 +108,6 @@ export default function Grid() {
       const cell = getCellFromEvent(e);
       if (!cell) return;
 
-      // Determine draw mode based on current cell state
       const currentState = grid[cell.row][cell.col];
       const newMode = currentState === 1 ? 0 : 1;
       setDrawMode(newMode as 0 | 1);
