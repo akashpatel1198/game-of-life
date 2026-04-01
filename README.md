@@ -12,7 +12,7 @@ An interactive Conway's Game of Life simulator built with Next.js. Click cells, 
 
 ## Live Version
 
-> **[https://your-url-here.com](https://your-url-here.com)** (replace with actual link)
+> **[https://game-of-life-explore.vercel.app/](https://game-of-life-explore.vercel.app/)
 
 Open the site, click "Start Simulation" on the landing page, and you're in. Click cells to toggle them alive/dead, or pick a pattern from the sidebar and place it on the grid. Hit play and watch it run. You can also randomize the grid, adjust speed, and resize the grid from the settings panel.
 
