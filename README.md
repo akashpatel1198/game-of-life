@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Game of Life
 
-## Getting Started
+An interactive Conway's Game of Life simulator built with Next.js. Click cells, drop patterns, watch things evolve.
 
-First, run the development server:
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- HTML5 Canvas for grid rendering
+
+## Live Version
+
+> **[https://your-url-here.com](https://your-url-here.com)** (replace with actual link)
+
+Open the site, click "Start Simulation" on the landing page, and you're in. Click cells to toggle them alive/dead, or pick a pattern from the sidebar and place it on the grid. Hit play and watch it run. You can also randomize the grid, adjust speed, and resize the grid from the settings panel.
+
+## Local Development
+
+### Prerequisites
+
+- Node.js (v18+)
+- npm
+
+### Setup
 
 ```bash
+git clone https://github.com/your-username/game-of-life.git
+cd game-of-life
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App runs at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+None. No API keys, no backend, no external services. Everything runs client-side.
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+├── page.tsx                    # Landing page (rules, explanation, CTA)
+├── layout.tsx                  # Root layout with ThemeProvider
+├── globals.css                 # Global styles, theme CSS variables
+└── game/
+    ├── page.tsx                # Game page with GameProvider
+    └── _gameComponents/
+        ├── Grid.tsx            # Canvas-based grid rendering
+        ├── TopBar.tsx          # Play/pause/step/clear controls
+        ├── SettingsPanel.tsx   # Grid size and speed sliders
+        ├── PatternPanel.tsx    # Pattern library sidebar
+        └── PatternPicker.tsx   # Individual pattern card
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+contexts/
+├── GameContext.tsx              # Game state (useReducer), game loop
+└── ThemeContext.tsx             # Dark/light theme toggle
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+lib/
+├── gameLogic.ts                # Conway's rules, grid operations
+├── patterns.ts                 # 20+ pattern definitions
+└── types.ts                    # TypeScript types, default config
+```
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run dev       # Dev server
+npm run build     # Production build
+npm start         # Start production server
+npm run lint      # ESLint
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## How It Works
+
+The game logic lives in `lib/gameLogic.ts` and implements the four standard rules:
+
+1. Any live cell with fewer than 2 neighbors dies (underpopulation)
+2. Any live cell with 2 or 3 neighbors survives
+3. Any live cell with more than 3 neighbors dies (overpopulation)
+4. Any dead cell with exactly 3 neighbors becomes alive (reproduction)
+
+The grid renders on an HTML5 Canvas for performance. Game state is managed with `useReducer` in a React context, and the simulation loop uses `requestAnimationFrame`. Theme preference is stored in `localStorage`.
+
+The pattern library includes still lifes, oscillators, spaceships, guns, and other classic configurations. Patterns can be rotated before placement.
